@@ -1,0 +1,55 @@
+<project name="PhaseB_5299" default="jar" basedir=".">
+    <!-- Property Definitions -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build/classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="assets.dir" value="project_assets"/>
+
+    <!-- Target: Clean -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Target: Compile (Main Project) -->
+    <target name="compile" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" encoding="UTF-8">
+            <!-- Exclude JUnit tests -->
+            <exclude name="**/JUnitTests/**"/>
+        </javac>
+        <copy todir="${build.dir}">
+            <fileset dir="${assets.dir}"/>
+        </copy>
+    </target>
+
+    <!-- Target: Package (JAR) -->
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/PhaseB_5299.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="mvc.Main"/>
+            </manifest>
+            <fileset dir="${assets.dir}">
+                <exclude name="**/*.bak"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- Target: Run JAR -->
+    <target name="run-jar" depends="jar">
+        <java jar="${dist.dir}/PhaseB_5299.jar" fork="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+        </java>
+    </target>
+
+    <!-- Target: Run Without JAR -->
+    <target name="run" depends="compile">
+        <java classname="mvc.Main" fork="true">
+            <jvmarg value="-Dfile.encoding=UTF-8"/>
+            <classpath>
+                <pathelement path="${build.dir}"/>
+            </classpath>
+        </java>
+    </target>
+</project>
